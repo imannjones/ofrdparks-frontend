@@ -1,0 +1,60 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>OFRDParks.com - Offroad Park Conditions</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; background: #f4f4f4; }
+    h1 { color: #333; }
+    .park { background: #fff; padding: 15px; margin: 15px 0; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+  </style>
+</head>
+<body>
+  <h1>OFRDParks.com - Offroad Park Conditions</h1>
+  <div id="parks">Loading...</div>
+
+  <script>
+    async function loadConditions() {
+      try {
+        const res = await fetch('https://your-backend-url.up.railway.app/current-conditions');
+        const data = await res.json();
+
+        const container = document.getElementById('parks');
+        container.innerHTML = '';
+
+        for (const [name, info] of Object.entries(data)) {
+          const block = document.createElement('div');
+          block.className = 'park';
+          block.innerHTML = `
+            <h2>${name}</h2>
+            <p><strong>Total Rain (Past 7 Days):</strong> ${info.totalWeeklyRain}</p>
+            <p><strong>Recent Rain (Last 6 Hours):</strong> ${info.recentRain}</p>
+            <p><strong>Today's High:</strong> ${info.todayHigh}</p>
+            <p><strong>Today's Low:</strong> ${info.todayLow}</p>
+            <p><strong>Last Rain:</strong> ${info.lastRainHoursAgo}</p>
+            <p><strong>Mud Level:</strong> ${info.mudLevel} / 10 
+              <span style="color:${info.mudLevel > 7 ? 'red' : info.mudLevel > 4 ? 'orange' : 'green'};">
+                (${info.mudLevel > 7 ? 'Very Muddy' : info.mudLevel > 4 ? 'Moderate' : 'Dry'})
+              </span>
+            </p>
+            <p><strong>Dust Level:</strong> ${info.dustLevel} / 10 
+              <span style="color:${info.dustLevel > 7 ? 'red' : info.dustLevel > 4 ? 'orange' : 'green'};">
+                (${info.dustLevel > 7 ? 'Very Dusty' : info.dustLevel > 4 ? 'Moderate' : 'Low Dust'})
+              </span>
+            </p>
+            <p><strong>Last Updated:</strong> ${new Date(info.lastUpdated).toLocaleString()}</p>
+          `;
+          container.appendChild(block);
+        }
+      } catch (err) {
+        document.getElementById('parks').innerText = 'Failed to load data.';
+        console.error(err);
+      }
+    }
+
+    loadConditions();
+    setInterval(loadConditions, 5 * 60 * 1000);
+  </script>
+</body>
+</html>
