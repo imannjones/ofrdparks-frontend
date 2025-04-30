@@ -59,7 +59,7 @@
       const container = document.getElementById('parks');
       container.innerHTML = "Loading park conditions...";
       try {
-        const res = await fetch('https://ofrdparks-backend.onrender.com/current-conditions');
+        const res = await fetch('https://ofrdparks-backendreal.onrender.com/current-conditions');
         if (!res.ok) throw new Error("Failed to fetch data");
         const data = await res.json();
         container.innerHTML = "";
